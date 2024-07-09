@@ -3,12 +3,14 @@ import Pagination from "../pagination/Pagination";
 import Search from "../search/Search";
 import UserList from "./user-list/UserList";
 import UserAdd from "./user-add/UserAdd";
+import UserDetails from "./user-details/UserDetails";
 
 const baseUrl = "http://localhost:3030/jsonstore"
 
 export default function UserSection() {
     const [users, setUsers] = useState([]);
     const [showAddUser, setShowAddUser] = useState(false);
+    const [showUserDetails, setShowUserDetails] = useState(null)
 
     useEffect(() => {
         (async function getUsers() {
@@ -58,17 +60,32 @@ export default function UserSection() {
         setShowAddUser(false)
     }
 
+
+    const userDetailsClickHandler = (userId) => {
+        setShowUserDetails(userId);
+    }
+
     return (
         <section className="card users-container">
         
             <Search />
     
-            <UserList users={users} />
+            <UserList 
+                users={users}
+                onUserDetailsClick={userDetailsClickHandler}
+            />
 
             {showAddUser && (
                 <UserAdd 
                     onClose={addUserCloseHandler}
                     onSave={addUserSaveHandler}
+                />
+            )}
+
+            {showUserDetails && (
+                <UserDetails 
+                    user={users.find(user => user._id === showUserDetails)}
+                    onClose={() => setShowUserDetails(null)}
                 />
             )}
     
